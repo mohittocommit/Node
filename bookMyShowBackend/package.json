@@ -1,0 +1,23 @@
+{
+  "name": "nodejs",
+  "version": "1.0.0",
+  "description": "Nodejs Application",
+  "main": "app.js",
+  "scripts": {
+    "test": "Mocha & Chai"
+  },
+  "keywords": [
+    "JS",
+    "Node",
+    "MYSQL",
+    "API"
+  ],
+  "author": "Mohit",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mysql2": "^3.10.1",
+    "nodemon": "^3.1.4"
+  }
+}
