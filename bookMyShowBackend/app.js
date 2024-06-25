@@ -1,6 +1,6 @@
 const express = require("express")
 const app = express();
-const routes = require("./routes")
+const routes = require("./src/routes")
 
 
 app.use("/",routes)
@@ -13,7 +13,5 @@ app.listen(port, ()=> {
 
 
 /*
-    what is dotenv in package
     what is mocha & chai
-    nodemon not working
 */
