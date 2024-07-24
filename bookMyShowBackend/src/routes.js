@@ -4,8 +4,9 @@ const router = express.Router();
 const bcrypt = require("bcrypt")
 // Import the db connection
 const db = require("./dbConnection")
+const verifyToken = require("./utils/verifyToken")
 
-
+// welcome api
 router.get("/", (req, res) => {
     return res.send("Hello World!")
 });
@@ -85,7 +86,15 @@ router.post("/api/login", (req, res) => {
         }
     })
 })
-
+router.get("/api/profile", verifyToken, (req, res) => {
+    const { email } = req.user;
+    db.query("SELECT * FROM users where email=?", [email], (error, result) => {
+        if (error) {
+            return res.status(500).send(error)
+        }
+        return res.json(result)
+    })
+})
 
 router.get("/api/users", (req, res) => {
     db.query("SELECT * FROM users", (error, result) => {

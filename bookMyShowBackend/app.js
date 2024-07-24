@@ -1,8 +1,11 @@
 const express = require("express")
 const bodyParser = require("body-parser"); // Middleware
 const app = express();
+const cors = require("cors");
 const routes = require("./src/routes")
 
+
+app.use(cors()); // Use this to allow all origins
 
 // Add body parser as middleware
 app.use(bodyParser.json());
