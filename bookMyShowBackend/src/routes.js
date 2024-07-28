@@ -58,11 +58,12 @@ router.post("/api/login", (req, res) => {
         if (result) {
             if (result.length === 0) {
                 const response = {
-                    message: "Invalide login details!",
+                    message: "Invalid login details!",
                     status: false
                 }
                 return res.status(401).json(response);
             }
+
             const hashPassword = result[0].password
             const match = await bcrypt.compare(password, hashPassword);
 
@@ -86,6 +87,7 @@ router.post("/api/login", (req, res) => {
         }
     })
 })
+
 router.get("/api/profile", verifyToken, (req, res) => {
     const { email } = req.user;
     db.query("SELECT * FROM users where email=?", [email], (error, result) => {
@@ -93,6 +95,60 @@ router.get("/api/profile", verifyToken, (req, res) => {
             return res.status(500).send(error)
         }
         return res.json(result)
+    })
+})
+
+router.post("/api/change_password", verifyToken, (req, res) => {
+
+    const { currentPassword, newPassword } = req.body;
+
+    console.log("req.body", req.body)
+    const { email } = req.user;
+
+    const sqlQuery = `SELECT * FROM users WHERE email='${email}'`;
+    db.query(sqlQuery, async (error, result) => {
+        if (error) {
+            return res.status(500).send(error);
+        }
+        if (result) {
+            if (result.length === 0) {
+                const response = {
+                    message: "User Does not exist!",
+                    status: false
+                }
+                return res.status(401).json(response);
+            }
+            console.log("result", result)
+
+            const hashPassword = result[0].password
+            const match = await bcrypt.compare(currentPassword, hashPassword);
+
+            if (match) {
+                /* password encryption */
+                const salt = await bcrypt.genSaltSync(10);
+                const hashNewPassword = await bcrypt.hashSync(newPassword, salt);
+
+                const sqlQuery = `UPDATE users SET password = '${hashNewPassword}' WHERE email = '${email}'`;
+                db.query(sqlQuery, async (error, result) => {
+                    if (error) {
+                        return res.status(500).send(error);
+                    }
+                    if (result) {
+                        const response = {
+                            message: "Password reset successfully",
+                            status: true
+                        }
+                        return res.json(response)
+                    }
+                })
+            } else {
+                const response = {
+                    message: "Old password is incorrect.!",
+                    status: false
+                }
+                return res.status(401).json(response);
+            }
+        }
     })
 })
 
